@@ -60,6 +60,14 @@ namespace fitSharp.Test.Double
             MakeFile(theOutputPath, FileContent(theInputPath));
         }
         
+        public void PushDir(string path) {
+            ;
+        }
+
+        public void PopDir() {
+            ;
+        }
+        
         public void Write(string theMessage) {}
 
         private readonly Hashtable myFiles;

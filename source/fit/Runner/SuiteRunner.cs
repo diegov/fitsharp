@@ -85,30 +85,40 @@ namespace fit.Runner {
 
             public void Do(StoryTestPage page) {
                 var elapsedTime = new ElapsedTime();
+
                 var input = page.TestContent;
+
                 if (string.IsNullOrEmpty(input)) {
                     page.WriteNonTest();
                     DoNoTest();
                 }
-	            var service = new Service.Service(configuration);
-	            Tree<Cell> result = service.Compose(new StoryTestString(input));
-	            if (result == null || result.Branches.Count == 0) {
+                var service = new Service.Service(configuration);
+                Tree<Cell> result = service.Compose(new StoryTestString(input));
+                if (result == null || result.Branches.Count == 0) {
                     page.WriteNonTest();
                     DoNoTest();
-	                return;
-	            }
+                    return;
+                }
                 var writer = new StoryTestStringWriter(service);
                 var storyTest = new StoryTest((Parse) result, writer);
                 if (page.Name.IsSuitePage) {
-	                storyTest.ExecuteOnConfiguration(configuration);
+                    storyTest.ExecuteOnConfiguration(configuration);
                 }
                 else {
-	                storyTest.Execute(configuration);
+                    page.PushEnvironment();
+                    try {
+                        storyTest.Execute(configuration);
+                    }
+                    finally {
+                        page.PopEnvironment();
+                    }
                 }
                 var pageResult = new PageResult(page.Name.Name, writer.Tables, writer.Counts, elapsedTime);
                 page.WriteTest(pageResult);
                 handleCounts(writer.Counts);
                 resultWriter.WritePageResult(pageResult);
+
+
             }
 
             public void DoNoTest() {

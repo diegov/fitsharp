@@ -4,6 +4,7 @@
 // to be bound by the terms of this license. You must not remove this notice, or any other, from this software.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -11,13 +12,27 @@ namespace fitSharp.IO {
     public class FileSystemModel: FolderModel {
         
         private readonly Encoding encoding;
+        private readonly Stack<string> directories;
 
-        public FileSystemModel() {
-            encoding = Encoding.UTF8;
+        public FileSystemModel() 
+            : this(Encoding.UTF8) {}
+
+        public FileSystemModel(int codePage)
+            : this(Encoding.GetEncoding(codePage)) {}
+
+        private FileSystemModel(Encoding encoding) {
+            this.encoding = encoding;
+            directories = new Stack<string>();
         }
 
-        public FileSystemModel(int codePage) {
-            encoding = Encoding.GetEncoding(codePage);
+        public void PushDir(string path) {
+            directories.Push(Directory.GetCurrentDirectory());
+            Directory.SetCurrentDirectory(path);
+        }
+
+        public void PopDir() {
+            var previousDir = directories.Pop();
+            Directory.SetCurrentDirectory(previousDir);
         }
 
         public void MakeFile(string thePath, string theContent) {

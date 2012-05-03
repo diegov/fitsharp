@@ -3,6 +3,7 @@
 // which can be found in the file license.txt at the root of this distribution. By using this software in any fashion, you are agreeing
 // to be bound by the terms of this license. You must not remove this notice, or any other, from this software.
 
+using System;
 using System.IO;
 using fitSharp.Fit.Model;
 using fitSharp.IO;
@@ -17,6 +18,8 @@ namespace fitSharp.Fit.Runner {
         void WriteNonTest();
         string TestContent { get; }
         //void ExecuteStoryPage(StoryTestPageExecutor executor);
+        void PushEnvironment();
+        void PopEnvironment();
     }
 
     public interface StoryTestPageExecutor {
@@ -46,6 +49,15 @@ namespace fitSharp.Fit.Runner {
                 if (myPath.IsSuiteSetUp || myPath.IsSuiteTearDown) return PlainContent.ToString();
                 return string.Empty;
             }
+        }
+
+        public void PushEnvironment() {
+            myFolderModel.PushDir(Path.GetDirectoryName(
+                Path.GetFullPath(myPath.Name)));
+        }
+
+        public void PopEnvironment() {
+            myFolderModel.PopDir();
         }
 
         public void WriteNonTest() {

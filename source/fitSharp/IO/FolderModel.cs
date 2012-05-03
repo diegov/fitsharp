@@ -7,6 +7,8 @@ using System.IO;
 
 namespace fitSharp.IO {
     public interface FolderModel {
+        void PushDir(string path);
+        void PopDir();
         void MakeFile(string thePath, string theContent);
         string FileContent(string thePath);
         string[] GetFiles(string thePath);
